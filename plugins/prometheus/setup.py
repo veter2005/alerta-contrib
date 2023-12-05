@@ -6,7 +6,7 @@ setup(
     name='alerta-prometheus',
     version=version,
     description='Alerta plugin for Prometheus Alertmanager',
-    url='https://github.com/alerta/alerta-contrib',
+    url='https://github.com/veter2005/alerta-contrib',
     license='MIT',
     author='Nick Satterly',
     author_email='nick.satterly@theguardian.com',
