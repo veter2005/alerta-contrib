@@ -24,8 +24,8 @@ ALERTMANAGER_USERNAME = os.environ.get(
     'ALERTMANAGER_USERNAME') or app.config.get('ALERTMANAGER_USERNAME', None)
 ALERTMANAGER_PASSWORD = os.environ.get(
     'ALERTMANAGER_PASSWORD') or app.config.get('ALERTMANAGER_PASSWORD', None)
-ALERTMANAGER_SILENCE_DAYS = os.environ.get(
-    'ALERTMANAGER_SILENCE_DAYS') or app.config.get('ALERTMANAGER_SILENCE_DAYS', 1)
+ALERTMANAGER_SILENCE_PERIOD = os.environ.get(
+    'ALERTMANAGER_SILENCE_PERIOD') or app.config.get('ALERTMANAGER_SILENCE_PERIOD', '1d')
 ALERTMANAGER_SILENCE_FROM_ACK = os.environ.get(
     'ALERTMANAGER_SILENCE_FROM_ACK') or app.config.get('ALERTMANAGER_SILENCE_FROM_ACK', False)
 ALERTMANAGER_USE_EXTERNALURL_FOR_SILENCES = os.environ.get(
@@ -76,7 +76,7 @@ class AlertmanagerSilence(PluginBase):
                 LOG.warning('Status is now closed')
 
         return alert
-
+    
     def take_action(self, alert: Alert, action: str, text: str, **kwargs) -> Any:
         '''
         Set silence in alertmanager.
@@ -108,17 +108,20 @@ class AlertmanagerSilence(PluginBase):
 
         elif action == 'ack' and ALERTMANAGER_SILENCE_FROM_ACK:
 
-            if not ALERTMANAGER_SILENCE_DAYS:
+            if not ALERTMANAGER_SILENCE_PERIOD:
                 silence_seconds = kwargs.get('timeout', alert.timeout)
             else:
                 try:
-                    silence_days = int(ALERTMANAGER_SILENCE_DAYS)
+                    silence_period = int(ALERTMANAGER_SILENCE_PERIOD[:-1])
                 except Exception as e:
                     LOG.error(
-                        "Alertmanager: Could not parse 'ALERTMANAGER_SILENCE_DAYS': %s", e)
+                        "Alertmanager: Could not parse 'ALERTMANAGER_SILENCE_PERIOD': %s", e)
                     raise RuntimeError(
-                        "Could not parse 'ALERTMANAGER_SILENCE_DAYS': %s" % e)
-                silence_seconds = silence_days * 86400
+                        "Could not parse 'ALERTMANAGER_SILENCE_PERIOD': %s" % e)
+                unit_mapping = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400, 'w': 604800}
+                time_unit = ALERTMANAGER_SILENCE_PERIOD[-1].lower()
+                # Convert to seconds using the unit_mapping
+                silence_seconds = silence_period * unit_mapping.get(time_unit, 1)
 
             LOG.debug('Alertmanager: Add silence for alertname=%s instance=%s timeout=%s',
                       alert.event, alert.resource, str(silence_seconds))
