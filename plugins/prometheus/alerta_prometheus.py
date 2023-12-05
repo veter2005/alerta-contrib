@@ -124,7 +124,7 @@ class AlertmanagerSilence(PluginBase):
                 silence_seconds = silence_period * unit_mapping.get(time_unit, 1)
 
             LOG.debug('Alertmanager: Add silence for alertname=%s instance=%s severity=%s timeout=%s',
-                      alert.event, alert.resource, alert.severity str(silence_seconds))
+                      alert.event, alert.resource, alert.severity, str(silence_seconds))
             data = {
                 'matchers': [
                     {
