@@ -55,7 +55,7 @@ class AlertmanagerSilence(PluginBase):
 
             silenceId = alert.attributes.get('silenceId', None)
             if silenceId:
-                LOG.debug('Alertmanager: Remove silence for alertname=%s instance=%s' severity=%s,
+                LOG.debug('Alertmanager: Remove silence for alertname=%s instance=%s severity=%s',
                           alert.event, alert.resource, alert.severity)
                 base_url = ALERTMANAGER_API_URL or alert.attributes.get(
                     'externalUrl', DEFAULT_ALERTMANAGER_API_URL)
@@ -178,7 +178,7 @@ class AlertmanagerSilence(PluginBase):
             LOG.debug('Alertmanager: Added silenceId %s to attributes', silenceId)
 
         elif action == 'unack':
-            LOG.debug('Alertmanager: Remove silence for alertname=%s instance=%s' severity=%s,
+            LOG.debug('Alertmanager: Remove silence for alertname=%s instance=%s severity=%s',
                       alert.event, alert.resource, alert.severity)
 
             silenceId = alert.attributes.get('silenceId', None)
