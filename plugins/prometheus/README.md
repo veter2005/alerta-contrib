@@ -37,7 +37,7 @@ The below settings are configured with reasonable defaults:
 
 ```python
 ALERTMANAGER_API_URL = 'http://localhost:9093'
-ALERTMANAGER_SILENCE_DAYS = 1
+ALERTMANAGER_SILENCE_PERIOD = '1d'
 ```
 
 Or, if you want to inherit silence timeout from ack timeout:
@@ -64,7 +64,7 @@ ALERTMANAGER_USE_EXTERNALURL_FOR_SILENCES = True
 ```python
 PLUGINS = ['reject','prometheus']
 ALERTMANAGER_API_URL = 'http://demo.robustperception.io:9093'  # default=http://localhost:9093
-ALERTMANAGER_SILENCE_DAYS = 2  # default=1
+ALERTMANAGER_SILENCE_PERIOD = '2h'  # default=1d | ['1s','1m','1h','1d','1w']
 ```
 
 
