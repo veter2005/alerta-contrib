@@ -55,8 +55,8 @@ class AlertmanagerSilence(PluginBase):
 
             silenceId = alert.attributes.get('silenceId', None)
             if silenceId:
-                LOG.debug('Alertmanager: Remove silence for alertname=%s instance=%s',
-                          alert.event, alert.resource)
+                LOG.debug('Alertmanager: Remove silence for alertname=%s instance=%s' severity=%s,
+                          alert.event, alert.resource, alert.severity)
                 base_url = ALERTMANAGER_API_URL or alert.attributes.get(
                     'externalUrl', DEFAULT_ALERTMANAGER_API_URL)
                 url = base_url + '/api/v1/silence/%s' % silenceId
@@ -123,8 +123,8 @@ class AlertmanagerSilence(PluginBase):
                 # Convert to seconds using the unit_mapping
                 silence_seconds = silence_period * unit_mapping.get(time_unit, 1)
 
-            LOG.debug('Alertmanager: Add silence for alertname=%s instance=%s timeout=%s',
-                      alert.event, alert.resource, str(silence_seconds))
+            LOG.debug('Alertmanager: Add silence for alertname=%s instance=%s severity=%s timeout=%s',
+                      alert.event, alert.resource, alert.severity str(silence_seconds))
             data = {
                 'matchers': [
                     {
@@ -134,6 +134,10 @@ class AlertmanagerSilence(PluginBase):
                     {
                         'name': 'instance',
                         'value': alert.resource
+                    },
+                    {
+                        'name': 'severity',
+                        'value': alert.severity
                     }
                 ],
                 'startsAt': datetime.datetime.utcnow().replace(microsecond=0).isoformat() + '.000Z',
@@ -174,8 +178,8 @@ class AlertmanagerSilence(PluginBase):
             LOG.debug('Alertmanager: Added silenceId %s to attributes', silenceId)
 
         elif action == 'unack':
-            LOG.debug('Alertmanager: Remove silence for alertname=%s instance=%s',
-                      alert.event, alert.resource)
+            LOG.debug('Alertmanager: Remove silence for alertname=%s instance=%s' severity=%s,
+                      alert.event, alert.resource, alert.severity)
 
             silenceId = alert.attributes.get('silenceId', None)
             if silenceId:
